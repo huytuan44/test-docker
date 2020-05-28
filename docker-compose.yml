@@ -4,6 +4,9 @@ services:
   #PHP Service
   app:
     image: test-docker
+    build: 
+      context: .
+      dockerfile: Dockerfile
     restart: unless-stopped
     volumes:
       - ./:/var/www/html
@@ -32,8 +35,23 @@ services:
       - MYSQL_USER=tuanbh
       - MYSQL_PASSWORD=123456
     ports:
-      - "3309:3306"
+      - "3306:3306"
     volumes:
       - ./.docker/mysql:/var/lib/minesql
       - ./.docker/mysql/dmp:/var/lib/minesql/dmp
       - ./.docker/mysql/db_data:/var/lib/minesql/data
+  
+  #DB UI management service
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports: 
+      - 8080:8080
+    depends_on: 
+      - db    
+
+  redis:
+    image: redis:5-alpine
+    volumes: 
+      - ./.docker/data/redis:/data
+    restart: unless-stopped      
